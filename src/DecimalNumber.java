@@ -1,5 +1,4 @@
-import java.util.LinkedList;
-import java.util.List;
+import javafx.util.Pair;
 
 import static java.lang.Math.*;
 
@@ -110,18 +109,18 @@ public final class DecimalNumber {
 
     /**
      * Для заданных дробных частей чисел добавляет в конце нули тому,
-     * которое меньше по длине и возвращает ужную длину дробной части
+     * которое меньше по длине
      * @param firstFrac - дробная часть первого числа
      * @param secondFrac - дробная часть второго числа
-     * @return длину дробной части
+     * @return измененные дробные части
      */
-    private int stabilizesFracParts(long firstFrac, long secondFrac) {
+    private Pair<Long, Long> stabilizesFracParts(long firstFrac, long secondFrac) {
         int numLength = length(firstFrac);
         int thisLength = length(secondFrac);
         int fracLength = max(thisLength, numLength);
         secondFrac = moveFracPart(secondFrac, thisLength, fracLength);
         firstFrac = moveFracPart(firstFrac, numLength, fracLength);
-        return fracLength;
+        return new Pair(firstFrac, secondFrac);
     }
 
     private DecimalNumber(long intP, long fracP, int newSign){
@@ -143,7 +142,10 @@ public final class DecimalNumber {
         long numFrac = number.fracPart;
         intAns += intPart + number.intPart;
         long fracAns = 0;
-        int fracLength = stabilizesFracParts(numFrac, thisFrac);
+        Pair<Long, Long> ans = stabilizesFracParts(numFrac, thisFrac);
+        numFrac = ans.getKey();
+        thisFrac = ans.getValue();
+        int fracLength = length(max(numFrac,thisFrac));
         if (sign == number.sign) {
             fracAns = thisFrac + numFrac;
             if (length(fracAns) != fracLength) {
@@ -199,27 +201,35 @@ public final class DecimalNumber {
      * объект класса DecimalNumber
      */
     public DecimalNumber minus(DecimalNumber number) {
-        switch (this.compareTo(number)) {
-            case 0: {
-                return new DecimalNumber(0, 0, 1);
+        if (sign == number.sign) {
+            switch (this.compareTo(number)) {
+                case 0: {
+                    return new DecimalNumber(0, 0, 1);
+                }
+                case -1: {
+                    return number.minus(this).unaryMinus();
+                }
             }
-            case -1: {
-                return number.minus(this).unaryMinus();
+            long intAns = intPart - number.intPart;
+            long thisFrac = fracPart;
+            long numFrac = number.fracPart;
+            Pair<Long, Long> ans = stabilizesFracParts(numFrac, thisFrac);
+            numFrac = ans.getKey();
+            thisFrac = ans.getValue();
+            long fracLength = length(max(numFrac, thisFrac));
+            long fracAns = thisFrac - numFrac;
+            if (fracAns < 0) {
+                fracAns += pow(10, fracLength + 1);
+                intAns --;
             }
+            while (fracAns % 10 == 0 && fracAns != 0) {
+                fracAns /= 10;
+            }
+            return new DecimalNumber(intAns, fracAns, sign);
         }
-        long intAns = intPart - number.intPart;
-        long thisFrac = fracPart;
-        long numFrac = number.fracPart;
-        int fracLength = stabilizesFracParts(numFrac, thisFrac);
-        long fracAns = thisFrac - numFrac;
-        if (fracAns < 0) {
-            fracAns += pow(10, fracLength + 1);
-            intAns --;
+        else {
+            return this.plus(number.unaryMinus());
         }
-        while (fracAns % 10 == 0 && fracAns != 0) {
-            fracAns /= 10;
-        }
-        return new DecimalNumber(intAns, fracAns, sign);
     }
 
     /**
@@ -313,6 +323,9 @@ public final class DecimalNumber {
     @Override
     public String toString() {
         StringBuilder ans = new StringBuilder();
+        if (sign == -1) {
+            ans.append('-');
+        }
         ans.append(intPart);
         if (fracPart != 0) {
             ans.append(',');

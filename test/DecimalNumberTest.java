@@ -9,8 +9,8 @@ public class DecimalNumberTest {
                 (new DecimalNumber(32)).plus(new DecimalNumber(-18)));
         assertEquals("24,92",
                 (new DecimalNumber("23,12")).plus(new DecimalNumber("1,8")).toString());
-        assertEquals((new DecimalNumber(-21.34)).toString(),
-                (new DecimalNumber(-18.34).plus(new DecimalNumber("-3"))).toString());
+        assertEquals((new DecimalNumber("-21,34")).toString(),
+                (new DecimalNumber("-18,34").plus(new DecimalNumber("-3"))).toString());
         assertEquals(new DecimalNumber("2"),
                 (new DecimalNumber("1,9").plus(new DecimalNumber("0,1"))));
     }
