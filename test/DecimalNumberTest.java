@@ -38,7 +38,7 @@ public class DecimalNumberTest {
     @Test
     public void round() throws Exception {
         assertEquals(new DecimalNumber("3,2"), (new DecimalNumber("3,245")).round(3));
-        assertEquals(new DecimalNumber("-1,9"), (new DecimalNumber("-1,999"). round(3)));
+        assertEquals(new DecimalNumber("-1,9"), (new DecimalNumber("-1,999").round(3)));
         assertEquals(new DecimalNumber("10"), (new DecimalNumber("10,12").round(3)));
     }
 

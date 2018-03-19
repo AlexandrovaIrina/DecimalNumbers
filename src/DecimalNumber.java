@@ -34,14 +34,15 @@ public final class DecimalNumber {
 
     /**
      * Добавляет цифры в конец числа из заданной строки
-     * @param str - строка, из которой происходит добавление цифр в число
-     * @param num - число, в которое добавляются цифры в конце
+     *
+     * @param str  - строка, из которой происходит добавление цифр в число
+     * @param num  - число, в которое добавляются цифры в конце
      * @param from - индекс первой цифры для добавления в строке
-     * @param to - индекс до которого происходит добавление цифр(не включая)
+     * @param to   - индекс до которого происходит добавление цифр(не включая)
      * @return получившееся из строки число
      */
     private long addNumsFromStr(String str, long num, int from, int to) {
-        for(int i = from; i < to; i++) {
+        for (int i = from; i < to; i++) {
             num *= 10;
             num += str.charAt(i) - codeChar;
         }
@@ -94,9 +95,10 @@ public final class DecimalNumber {
 
     /**
      * Приписывает недостающие нули в конце дробной части числа
-     * @param frac - дробная часть числа
+     *
+     * @param frac   - дробная часть числа
      * @param length - изначальная длина дробной чатсти(@code frac)
-     * @param to - нужная длина дробной части
+     * @param to     - нужная длина дробной части
      */
 
     private long moveFracPart(long frac, int length, int to) {
@@ -110,7 +112,8 @@ public final class DecimalNumber {
     /**
      * Для заданных дробных частей чисел добавляет в конце нули тому,
      * которое меньше по длине
-     * @param firstFrac - дробная часть первого числа
+     *
+     * @param firstFrac  - дробная часть первого числа
      * @param secondFrac - дробная часть второго числа
      * @return измененные дробные части
      */
@@ -123,7 +126,7 @@ public final class DecimalNumber {
         return new Pair(firstFrac, secondFrac);
     }
 
-    private DecimalNumber(long intP, long fracP, int newSign){
+    private DecimalNumber(long intP, long fracP, int newSign) {
         intPart = intP;
         fracPart = fracP;
         sign = newSign;
@@ -145,7 +148,7 @@ public final class DecimalNumber {
         Pair<Long, Long> ans = stabilizesFracParts(numFrac, thisFrac);
         numFrac = ans.getKey();
         thisFrac = ans.getValue();
-        int fracLength = length(max(numFrac,thisFrac));
+        int fracLength = length(max(numFrac, thisFrac));
         if (sign == number.sign) {
             fracAns = thisFrac + numFrac;
             if (length(fracAns) != fracLength) {
@@ -155,11 +158,9 @@ public final class DecimalNumber {
             while (fracAns % 10 == 0 && fracAns != 0) {
                 fracAns /= 10;
             }
-        }
-        else if (sign == -1) {
+        } else if (sign == -1) {
             return new DecimalNumber(intPart, fracPart, -sign).minus(number);
-        }
-        else return this.minus(new DecimalNumber(number.intPart, number.fracPart, -number.sign));
+        } else return this.minus(new DecimalNumber(number.intPart, number.fracPart, -number.sign));
         return new DecimalNumber(intAns, fracAns, sign);
     }
 
@@ -167,10 +168,11 @@ public final class DecimalNumber {
      * Сравнивает данное десятичное дробное число с заданным.
      * Особенности: возвращает 1, если данное число больше
      * аргумента(@code number)
-     *                         0, если данное число равно
+     * 0, если данное число равно
      * аргументу(@code number)
-     *                         -1, если данное число меньше
+     * -1, если данное число меньше
      * аргумента(@code number)
+     *
      * @param number - число, с которым происходит сравнение данного числа
      * @return 1, 0 или -1, в зависимости от того больше, равно или меньше
      * аргумента данное число
@@ -220,23 +222,23 @@ public final class DecimalNumber {
             long fracAns = thisFrac - numFrac;
             if (fracAns < 0) {
                 fracAns += pow(10, fracLength + 1);
-                intAns --;
+                intAns--;
             }
             while (fracAns % 10 == 0 && fracAns != 0) {
                 fracAns /= 10;
             }
             return new DecimalNumber(intAns, fracAns, sign);
-        }
-        else {
+        } else {
             return this.plus(number.unaryMinus());
         }
     }
 
     /**
      * Переобразовывает число из дробного в целое, отбрасыванием запятой
+     *
      * @return число, полученное из целой и дробной части, отбрасыванием запятой
      */
-    private long stabilizeNumber(){
+    private long stabilizeNumber() {
         long thisNumber = intPart;
         int thisLength = length(fracPart);
         long thisFrac = fracPart;
@@ -266,13 +268,14 @@ public final class DecimalNumber {
 
     /**
      * Округление части числа до заданной позиции
+     *
      * @param part - часть числа(целая или дробная)
-     * @param pos - позиция, до которой производится округление
+     * @param pos  - позиция, до которой производится округление
      * @return часть числа, для которой производится округление
      * до заданной позиции(@code pos)
      */
     private long roundPart(long part, int pos) {
-        if (pos > 2)part /= pow(10, pos - 2);
+        if (pos > 2) part /= pow(10, pos - 2);
         if (part % 10 >= 5 && part / 10 % 10 != 9) {
             part += 10;
         }
@@ -282,6 +285,7 @@ public final class DecimalNumber {
 
     /**
      * Округление числа по математическим правилам до заданной позиции.
+     *
      * @param pos - позиция, до которой производится округление
      * @return число, полученнное округлением заданного до позиции(@code pos)
      */
@@ -292,9 +296,8 @@ public final class DecimalNumber {
         long ansInt = intPart;
         if (pos <= fracLength) {
             ansFrac = roundPart(ansFrac, pos);
-        }
-        else {
-            ansInt = roundPart(ansInt * 10 + fracPart / (long)pow(10, fracLength - 1),
+        } else {
+            ansInt = roundPart(ansInt * 10 + fracPart / (long) pow(10, fracLength - 1),
                     pos - fracLength + 1);
             ansFrac = 0;
         }
