@@ -2,7 +2,7 @@ import javafx.util.Pair;
 
 import static java.lang.Math.*;
 
-public final class DecimalNumber {
+public final class DecimalNumber implements Comparable<DecimalNumber>{
     private final long fracPart;
     private final long intPart;
     private final int sign;
@@ -177,11 +177,17 @@ public final class DecimalNumber {
      * @return 1, 0 или -1, в зависимости от того больше, равно или меньше
      * аргумента данное число
      */
-    private int compareTo(DecimalNumber number) {
+    public int compareTo(DecimalNumber number) {
         if (this.equals(number)) return 0;
-        if (intPart > number.intPart) return 1;
-        if (intPart == number.intPart &&
-                fracPart > number.fracPart) return 1;
+        if (sign == number.sign) {
+            if (intPart > number.intPart) return 1;
+            Pair <Long, Long> ans = stabilizesFracParts(fracPart, number.fracPart);
+            long thisFrac = ans.getKey();
+            long numFrac = ans.getValue();
+            if (intPart == number.intPart &&
+                    thisFrac > numFrac) return 1;
+        }
+        else if (sign > number.sign) return 1;
         return -1;
     }
 
